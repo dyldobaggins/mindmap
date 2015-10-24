@@ -32,7 +32,7 @@ src/client/lib
 .sass-cache
 
 # Build Stuff
-dist/%
+dist/
 
 # Other Stuff
 .DS_Store
