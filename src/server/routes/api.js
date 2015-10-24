@@ -46,13 +46,6 @@ var updateNodes = function(userid) {
 			}					
 		});
 	});
-	Node.find({}, function(err, nodes) {
-    var userMap = {};
-
-    nodes.forEach(function(user) {
-      userMap[user._id] = user;
-    });
-  });
 };
 
 module.exports = function (app) {
