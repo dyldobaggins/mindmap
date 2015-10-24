@@ -11,8 +11,13 @@
       	     style="display: block; 
       	     		margin: auto" />
 
-		<form class="pure-form" style="margin-left: 35%; margin-top: 15%">
-			<input type="text" placeholder="Username" id="username">
-    		<input type="password" placeholder="Password" id="password">
+		<form class="pure-form" id="cId">
+			<input type="text" placeholder="Username" id="username" ng-model="user">
+    		<!-- <input type="password" placeholder="Password" id="password"> -->
+        <div id="butt">
+            <a ui-sref="user({user: user})">
+              <button>Submit</button>
+            </a>
+        </div>   
     	</form>	
 </div>
