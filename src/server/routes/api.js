@@ -8,7 +8,7 @@ var concept_insights = watson.concept_insights({
   version: 'v2'
 });
 var getWatsonConcepts = function(text, cb) {
-	var concepts = [];
+	var concepts = {};
 	var watsonParams = {
 	  graph: '/graphs/wikipedia/en-20120601',
 	  text: text || ""
@@ -18,15 +18,41 @@ var getWatsonConcepts = function(text, cb) {
 	    cb(false, err);
 	  else {
 	    resp.annotations.forEach(function(conceptObj) {
-	    	var concept = {};
-	    	concept.label = conceptObj.concept.label;
-	    	concept.score = conceptObj.score;
-	    	concepts.push(concept);
+	    	concepts[conceptObj.concept.label.toLowerCase()] = conceptObj.score;
 	    });
-	    console.log(concepts);
 	    cb(true, concepts);
 	  }	  
 	});
+};
+
+var updateNodes = function(userid) {
+	console.log(userid + " triggered nodes update...");
+	var newNode = new Node();
+	newNode.userid = userid;
+
+	//save new node with empty map
+	newNode.save(function(err, newNode) {		
+		Person.find({}, function(err, persons) { //find everyone
+			if(persons.length < 2) return false; //db too small
+			for(var i = 0; i < persons.length; i++) { //compare everyone to everyone else
+				for(var j = i+1; j < persons.length; j++) {
+					for(var concept in persons[i].concepts) { //check concepts
+						if(persons[j].concepts[concept]) {
+							console.log(persons[i].userName + " and " + persons[j].userName + " have " + concept + " in common!");
+							//magical formula goes here
+						}
+					}
+				}
+			}					
+		});
+	});
+	Node.find({}, function(err, nodes) {
+    var userMap = {};
+
+    nodes.forEach(function(user) {
+      userMap[user._id] = user;
+    });
+  });
 };
 
 module.exports = function (app) {
@@ -53,15 +79,17 @@ module.exports = function (app) {
       	getWatsonConcepts(req.body.text, function(success, concepts){
       		if(success) {
       			newPerson.concepts = concepts;
-      			newPerson.save(function(err) {
+      			newPerson.save(function(err, newPerson) {
 				        if (err) {
 				          return res.send(err);
-				        }
+				        }				    
 				        res.json(newPerson);
+				        updateNodes(newPerson._id);
 				    });
       		}
       		else {
-      			console.log("we fucked up");
+      			console.log("Error with watson: " + concepts);
+      			res.send(false);
       		}
       	});
       }

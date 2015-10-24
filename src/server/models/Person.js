@@ -9,15 +9,12 @@ module.exports = mongoose.model('User', {
 		type: String,
 		default: ""
 	},
-	userName: {				//unique
+	userName: {
 		type: String,
 		default: ""
 	},
 	concepts: {
-		type: [{
-			label: String,
-			score: Number
-		}],
-		default: []
+		type: Object,
+		default: {}
 	}
 });
