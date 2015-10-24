@@ -5,6 +5,7 @@ var serveStatic = require('serve-static');
 var json = require('express-json');
 var bodyParser  = require('body-parser');
 var methodOverride = require('method-override');
+var mongoose = require('mongoose');
 
 module.exports = function (app) {
 	app.set('port', process.env.PORT || 3000);
@@ -17,6 +18,7 @@ module.exports = function (app) {
 	app.use(methodOverride());
 	app.use(serveStatic(__dirname + '/../public'));
 
+	mongoose.connect('mongodb://mindmapadmin:mapmymind@ds043714.mongolab.com:43714/mindmapdb');
 
 	if ('development' == app.get('env')) {
 		
