@@ -33,3 +33,6 @@ src/client/lib
 
 # Build Stuff
 dist/%
+
+# Other Stuff
+.DS_Store
