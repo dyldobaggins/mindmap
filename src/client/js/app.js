@@ -57,24 +57,27 @@ function checkLoginState() {
 	});
 }
 
-window.fbAsyncInit = function() {
-	FB.init({
-	appId      : '1670710456508835',
-	cookie     : true,  // enable cookies to allow the server to access 
-	                    // the session
-	xfbml      : true,  // parse social plugins on this page
-	version    : 'v2.2' // use version 2.2
-	});
+$(document).ready(function(){
+	window.fbAsyncInit = function() {
+		FB.init({
+		appId      : '1670710456508835',
+		cookie     : true,  // enable cookies to allow the server to access 
+		                    // the session
+		xfbml      : true,  // parse social plugins on this page
+		version    : 'v2.2' // use version 2.2
+		});
 
-	FB.getLoginStatus(function(response) {
-	statusChangeCallback(response);
-	});
+		FB.getLoginStatus(function(response) {
+			statusChangeCallback(response);
+		});
 
- //    FB.api('/me', function(response) {
-	//     console.log(JSON.stringify(response));
-	// });
+	 //    FB.api('/me', function(response) {
+		//     console.log(JSON.stringify(response));
+		// });
+	};
+});
 
-};
+
 
 // function testAPI() {
 // 	console.log('Welcome!  Fetching your information.... ');
