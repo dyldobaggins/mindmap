@@ -1,6 +1,5 @@
 var mongoose = require('mongoose');
-
-module.exports = mongoose.model('User', {
+var schema = new mongoose.Schema({
 	firstName: {
 		type: String,
 		default: ""
@@ -16,5 +15,11 @@ module.exports = mongoose.model('User', {
 	concepts: {
 		type: Object,
 		default: {}
+	},
+	userMap: {
+		type: Object,
+		default: {}
 	}
-});
+}, { minimize: false });
+
+module.exports = mongoose.model('User', schema);

@@ -1,5 +1,5 @@
 var Node = require('../models/Node'),
-	Person = require('../models/Person'),
+	User = require('../models/User'),
 	watson = require('watson-developer-cloud');
 
 var concept_insights = watson.concept_insights({
@@ -26,45 +26,109 @@ var getWatsonConcepts = function(text, cb) {
 	});
 };
 
-var calcScore = function (personA, personB){
+var calcSimilarity = function (personA, personB){
 	var prod = 1;
 	for(var i = 0; i < personA.length; i++){
 		prod = prod * (Math.sqrt(personA[i]*personB[i]) * ( 1 - (Math.abs(personA[i] - personB[i]))));
 	}
 	return Math.pow(prod, 1/personA.length);
-}
+};
 
+var updateNodes = function(newUser, callback){
 
-var updateNodes = function(userid) {
-	console.log(userid + " triggered nodes update...");
-	var newNode = new Node();
-	newNode.userid = userid;
+	User.find({}, function(err, users){
+		if(err) return callback(err);
+		if(newUser.concepts.length < 1) return callback();
 
-	//save new node with empty map
-	newNode.save(function(err, newNode) {		
-		Person.find({}, function(err, persons) { //find everyone
-			if(persons.length < 2) return false; //db too small
-			Node.find({}, function(err, nodes) {				
-				for(var i = 0; i < persons.length; i++) { //compare everyone to everyone else
-					for(var j = i+1; j < persons.length; j++) {
-						var commonConcepts = [];
-						var iCommonScores = [];
-						var jCommonScores = [];
-						for(var concept in persons[i].concepts) { //check concepts
-							if(persons[j].concepts[concept]) {
-								commonConcepts.push(concept);
-								iCommonScores.push(persons[i].concepts[concept]);
-								jCommonScores.push(persons[j].concepts[concept]);
-								console.log(persons[i].userName + " and " + persons[j].userName + " have " + concept + " in common!");
-							}
-						}
-						var score = calcScore(iCommonScores, jCommonScores);
-						
+		var nodesToSave = [];
+
+		for(var i in users){
+
+			var a_concepts = [], b_concepts = [];
+
+			if(String(users[i]._id) != String(newUser._id)){
+				var matching_concepts = [];
+
+				for(var concept in newUser.concepts){
+					if(users[i].concepts[concept]){
+						matching_concepts.push(concept);
+						a_concepts.push(newUser.concepts[concept]);
+						b_concepts.push(users[i].concepts[concept]);
 					}
 				}
-			});				
+
+				if(matching_concepts.length > 0){
+					var obj = {};
+					obj.user = users[i]._id;
+					obj.score = calcSimilarity(a_concepts, b_concepts);
+					obj.concepts = matching_concepts;
+					nodesToSave.push(obj);
+				}
+				
+			}
+
+		}
+
+		if(nodesToSave.length < 1) return callback();
+
+		saveNodes(newUser, nodesToSave, function(err){
+			if(err){
+				console.log("NOT DONE", err);
+			}
+			else {
+				console.log("DONE");
+				callback(true);
+				//do something bad
+			}
+		});
+
+	});
+};
+
+var saveNodes = function(newUser, nodes, callback){
+	var done = 0;
+
+	//first update new user
+	User.findOne({_id: newUser._id}, function(err, found){
+		if(err) return callback(err);
+		if(!found) return callback("new user not found");
+
+		for(var i in nodes){
+			found.userMap[nodes[i].user] = {
+				"score": nodes[i].score,
+				"concepts": nodes[i].concepts
+			};
+		}
+		found.markModified("userMap");
+
+		found.save(function (err, savedNode) {
+		  if (err) return callback("could not save newNode");
+		  ++done;
+		  if(done == (nodes.length + 1)){
+		  	return callback();
+		  }
 		});
 	});
+
+	//update ALL OF THE OTHER USERS
+	for(var i in nodes){
+		User.findOne({_id: nodes[i].user}, function(err, found){
+			found.userMap[newUser._id] = {
+				"score": nodes[i].score,
+				"concepts": nodes[i].concepts
+			}
+			found.markModified("userMap");
+
+			found.save(function(err, savedNode){
+				if(err) return callback(err);
+				++done;
+				if(done == (nodes.length + 1)){
+					return callback();
+				}
+			});
+		});
+	}
+	
 };
 
 module.exports = function (app) {
@@ -75,35 +139,39 @@ module.exports = function (app) {
   app.post('/api/newuser', function(req,res){
   	var userName = req.body.userName;
 
-  	Person.findOne({ 'userName' :  userName }, function(err, user){
+  	User.findOne({ 'userName' :  userName }, function(err, user){
   		if (err)
           return res.send(err);
-      if (user) {
+      	if (user) {
           console.log("User " + userName + " already exists.");
           return res.send(false);
-      } else {
-      	console.log("Adding new user.");
-      	var newPerson = new Person();
-      	var concepts = [];
-      	newPerson.firstName = req.body.firstName;
-      	newPerson.lastName = req.body.lastName;
-      	newPerson.userName = userName;
-      	getWatsonConcepts(req.body.text, function(success, concepts){
-      		if(success) {
-      			newPerson.concepts = concepts;
-      			newPerson.save(function(err, newPerson) {
-				        if (err) {
-				          return res.send(err);
-				        }				    
-				        res.json(newPerson);
-				        updateNodes(newPerson._id);
-				    });
-      		}
-      		else {
-      			console.log("Error with watson: " + concepts);
-      			res.send(false);
-      		}
-      	});
+      	} else {
+      		console.log("Adding new user.");
+      		var newUser = new User();
+	      	var concepts = [];
+	      	newUser.firstName = req.body.firstName;
+	      	newUser.lastName = req.body.lastName;
+	      	newUser.userName = userName;
+	      	newUser.userMap = {};
+	      	getWatsonConcepts(req.body.text, function(success, concepts){
+	      		if(success) {
+	      			newUser.concepts = concepts;
+	      			newUser.markModified("userMap");
+	      			newUser.save(function(err, newUser) {
+					        if (err) {
+					          return res.send(err);
+					        }				    
+					        // res.json(newUser);
+					        updateNodes(newUser, function(){
+					        	res.json();
+					        });
+					    });
+	      		}
+	      		else {
+	      			console.log("Error with watson: " + JSON.stringify(concepts));
+	      			res.send(false);
+	      		}
+	      	});
       }
   	});
   });
