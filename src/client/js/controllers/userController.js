@@ -1,5 +1,5 @@
-app.controller("userController", function($scope, $stateParams, api){
-
+app.controller("userController", function($scope, $stateParams, $http, api){
+	var userRef = {};
 	console.log($stateParams.user);
 
 	$scope.user = $stateParams.user;
@@ -8,7 +8,14 @@ app.controller("userController", function($scope, $stateParams, api){
 
 	api.getMap($scope.user, true).then(function(map){
 		map = map.plain();
-
+		for(var id in map) {
+			(function(id) {
+			    api.getUserFromId(id, false, function(user) {
+					userRef[id] = user.plain();
+				});
+		    })(id);			
+		}
+		$scope.userRef = userRef;
 		var graph_data = {
 		"nodes":[
 			{"name":"userOne"},

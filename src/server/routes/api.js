@@ -203,6 +203,7 @@ module.exports = function (app) {
 	app.get('/api/user/:user', function(req,res){
 		User.findOne({'_id': req.params.user}, function(err, user){
 			if(err) return res.send(err);
+			console.log(user, JSON.stringify(user));
 			if(user) return res.send(user);
 			else return res.send();
 		});
