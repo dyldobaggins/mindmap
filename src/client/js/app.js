@@ -16,7 +16,7 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider){
 		controller: 'loginController'
 	})
 
-	.state('userPage', {
+	.state('user', {
 		url: '/user/:user',
 		controller: 'userController',
 		templateUrl: 'views/user.tpl.html'	
