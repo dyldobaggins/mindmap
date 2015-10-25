@@ -7,6 +7,7 @@ var concept_insights = watson.concept_insights({
   password: 'mRCTfO2GHlou',
   version: 'v2'
 });
+
 var getWatsonConcepts = function(text, cb) {
 	var concepts = {};
 	var watsonParams = {
@@ -25,6 +26,15 @@ var getWatsonConcepts = function(text, cb) {
 	});
 };
 
+var calcScore = function (personA, personB){
+	var prod = 1;
+	for(var i = 0; i < personA.length; i++){
+		prod = prod * (Math.sqrt(personA[i]*personB[i]) * ( 1 - (Math.abs(personA[i] - personB[i]))));
+	}
+	return Math.pow(prod, 1/personA.length);
+}
+
+
 var updateNodes = function(userid) {
 	console.log(userid + " triggered nodes update...");
 	var newNode = new Node();
@@ -34,16 +44,25 @@ var updateNodes = function(userid) {
 	newNode.save(function(err, newNode) {		
 		Person.find({}, function(err, persons) { //find everyone
 			if(persons.length < 2) return false; //db too small
-			for(var i = 0; i < persons.length; i++) { //compare everyone to everyone else
-				for(var j = i+1; j < persons.length; j++) {
-					for(var concept in persons[i].concepts) { //check concepts
-						if(persons[j].concepts[concept]) {
-							console.log(persons[i].userName + " and " + persons[j].userName + " have " + concept + " in common!");
-							//magical formula goes here
+			Node.find({}, function(err, nodes) {				
+				for(var i = 0; i < persons.length; i++) { //compare everyone to everyone else
+					for(var j = i+1; j < persons.length; j++) {
+						var commonConcepts = [];
+						var iCommonScores = [];
+						var jCommonScores = [];
+						for(var concept in persons[i].concepts) { //check concepts
+							if(persons[j].concepts[concept]) {
+								commonConcepts.push(concept);
+								iCommonScores.push(persons[i].concepts[concept]);
+								jCommonScores.push(persons[j].concepts[concept]);
+								console.log(persons[i].userName + " and " + persons[j].userName + " have " + concept + " in common!");
+							}
 						}
+						var score = calcScore(iCommonScores, jCommonScores);
+						
 					}
 				}
-			}					
+			});				
 		});
 	});
 };
