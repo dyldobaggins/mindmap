@@ -3,6 +3,7 @@ app.controller("userController", function($scope, $stateParams, $http, api, Face
 	console.log($stateParams.user);
 
 	$scope.user = $stateParams.user;
+	window.currentUser = $scope.user;
 
 	$scope.loading = {};
 	$scope.loading.status = true;
@@ -38,6 +39,7 @@ app.controller("userController", function($scope, $stateParams, $http, api, Face
 			    api.getUserFromId(id, false, function(user) {
 					userRef[id] = user.plain();
 					map[id].name = userRef[id].userName;
+					map[id].fullname = userRef[id].fullname;
 					Facebook.api('/' + userRef[id].userName + '/picture?width=200&height=200', function(response) {
 					  if(response && response.error){
 					  	console.log("error", response.error);

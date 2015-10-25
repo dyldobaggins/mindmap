@@ -23,7 +23,7 @@ Graph.prototype = {
 		        pruned.nodes.push({"name": self.user, "avatar": response.data.url});
 
 		        for(user in data){
-		        	pruned.nodes.push({"name": data[user].name, "avatar": data[user].avatar});
+		        	pruned.nodes.push({"name": data[user].name, "fullname": data[user].fullname,"avatar": data[user].avatar, "concepts": data[user].concepts, "score": String(Math.floor((parseFloat(data[user].score).toFixed(4)) * 100)) + "%"});
 		        	pruned.links.push({"source": 0, "target": pruned.links.length + 1, "value": data[user].score});
 		        }
 		        console.log("pruned", pruned);
@@ -58,8 +58,12 @@ Graph.prototype = {
 		});
 
 		force.linkStrength(function(link) {
-		return link.value;
+			return link.value;
 		});
+
+		var div = d3.select("body").append("div")	
+		    .attr("class", "tooltip")				
+		    .style("opacity", 0);
 
 		var svg = d3.select(opts.element).append("svg")
 		.attr("width", width)
@@ -78,6 +82,22 @@ Graph.prototype = {
 		var node = svg.selectAll(".node")
 			.data(self.data.nodes)
 			.enter().append('g')
+			.on("mouseover", function(d) {		
+				console.log("d", d);
+				if(d.name != window.currentUser){
+					div.transition()		
+					    .duration(200)		
+					    .style("opacity", .9)	
+						div.html('<div class="t_header">' + d.fullname + '</div><div class="t_content"><p><h3>score</h3> ' + d.score + ' </p><p><h3>concepts</h3> ' + (d.concepts).join() + '</p></div>')
+					    .style("left", (d3.event.pageX) + "px")		
+					    .style("top", (d3.event.pageY - 28) + "px");	
+					}
+			})					
+			.on("mouseout", function(d) {		
+				div.transition()		
+				    .duration(500)		
+				    .style("opacity", 0);	
+			})
 			.call(force.drag);
 
 		node.append("clipPath")
@@ -126,8 +146,8 @@ Graph.prototype = {
 			})
 
 
-		node.append("title")
-		  .text(function(d) { return d.name; });
+		// node.append("title")
+		//   .text(function(d) { return d.name; });
 
 
 

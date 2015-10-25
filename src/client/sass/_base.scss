@@ -133,6 +133,30 @@ input{
 	}
 }
 
+div.tooltip {	
+	position: absolute;
+	text-align: center;
+	width: auto;
+	height: auto;
+	font: 12px sans-serif;
+	background: rgb(89, 88, 87);
+	border: 0px;
+	border-radius: 0;
+	color: #fff;
+	pointer-events: none;
+
+	.t_header {
+		background: rgb(58, 58, 55);
+		padding: 10px;
+	}	
+	.t_content {
+		background: rgb(103, 103, 97);
+		padding:15px;
+		text-align: left;
+	}
+}
+
+
 .node {
   stroke: #fff;
   stroke-width: 1.5px;
