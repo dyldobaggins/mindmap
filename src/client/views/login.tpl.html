@@ -11,13 +11,11 @@
       	     style="display: block; 
       	     		margin: auto" />
 
-		<form class="pure-form" id="cId">
-			<input type="text" placeholder="Username" id="username" ng-model="user">
+		<form class="pure-form" id="cId" action="/api/uploadfile" method="post" enctype="multipart/form-data">
+			<input type="text" placeholder="Username" id="username" name="username">
+      <br>
+      <input type="file" name="document" accept=".zip"/>
     		<!-- <input type="password" placeholder="Password" id="password"> -->
-        <div id="butt">
-            <a ui-sref="user({user: user})">
-              <button class="pure-button">Submit</button>
-            </a>
-        </div>   
-    	</form>	
+      <input type="submit" value="Submit" name="submit">  
+  	</form>	
 </div>

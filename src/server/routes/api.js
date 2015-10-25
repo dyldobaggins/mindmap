@@ -1,6 +1,9 @@
 var Node = require('../models/Node'),
 	User = require('../models/User'),
-	watson = require('watson-developer-cloud');
+	watson = require('watson-developer-cloud'),
+	multer  = require('multer');
+
+var upload = multer({ dest: 'uploads/' })
 
 var concept_insights = watson.concept_insights({
   username: '3b3b8bc1-522d-48a9-9be9-0f0f82e3b47c',
@@ -137,6 +140,11 @@ module.exports = function (app) {
 		res.json("Welcome to the Graph API");
 	});
 
+	app.post('/api/uploadfile', upload.single('document'), function (req, res, next) {
+	  console.log(req.file);
+	  console.log(req.body.username);
+	  res.redirect('/');
+	})
 	app.post('/api/newuser', function(req,res){
 		var userName = req.body.userName;
 
