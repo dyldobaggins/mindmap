@@ -4,5 +4,5 @@ app.controller("userController", function($scope, $stateParams){
 
 	$scope.user = $stateParams.user;
 
-	// $scope.fid = FB.getUserID();
+	$scope.fid = '';
 });

@@ -39,6 +39,8 @@ function statusChangeCallback(response) {
     if (response.status === 'connected') {
       // Logged into your app and Facebook.
       // console.log("fb", FB);
+      $scope.fid = FB.getUserID();
+      console.log('id', FB.getUserID());
       document.getElementById('status').innerHTML = JSON.stringify(response);
       
 

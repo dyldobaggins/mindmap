@@ -1,4 +1,4 @@
-<div>{{user}}</div>
+<div ng-init="fid= FB.getUserID();">{{user}}</div>
 fid: {{fid}}
 
-<!-- <img ng-src="//graph.facebook.com/{{fid}}/picture"/> -->
+<img ng-src="//graph.facebook.com/{{fid}}/picture"/>
