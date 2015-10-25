@@ -1,6 +1,7 @@
 app.controller("loginController", function($scope, Facebook){
 	$scope.loggedIn = true;
 	$scope.showForm = false;
+	$scope.submitText = "Submit";
 
 	$scope.login = function() {
       if(!$scope.loggedIn){
