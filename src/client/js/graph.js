@@ -52,6 +52,10 @@ Graph.prototype = {
 		return link.value;
 		});
 
+		var div = d3.select("body").append("div")	
+    .attr("class", "tooltip")				
+    .style("opacity", 0);
+
 		var svg = d3.select(opts.element).append("svg")
 		.attr("width", width)
 		.attr("height", height);
@@ -80,6 +84,19 @@ Graph.prototype = {
 		  		return 20 * self.data.links[d.index - 1].value;
 		  	}
 		  })
+		  .on("mouseover", function(d) {		
+            div.transition()		
+                .duration(200)		
+                .style("opacity", .9);		
+            div	.html(String(self.data.links[d.index].toString()) + "<br/>"  + "Party")	
+                .style("left", (d3.event.pageX) + "px")		
+                .style("top", (d3.event.pageY - 28) + "px");	
+            })					
+        .on("mouseout", function(d) {		
+            div.transition()		
+                .duration(500)		
+                .style("opacity", 0);	
+        })
 		  .call(force.drag);
 
 		node.append("title")
