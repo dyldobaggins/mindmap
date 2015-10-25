@@ -1,6 +1,12 @@
 var Node = require('../models/Node'),
 	User = require('../models/User'),
-	watson = require('watson-developer-cloud');
+	watson = require('watson-developer-cloud'),
+	extract = require('pdf-text-extract'),
+	path = require('path'),
+	validator = require('validator'),
+	multer  = require('multer');
+
+var upload = multer({ dest: 'uploads/' });
 
 var concept_insights = watson.concept_insights({
   username: '3b3b8bc1-522d-48a9-9be9-0f0f82e3b47c',
@@ -19,7 +25,7 @@ var getWatsonConcepts = function(text, cb) {
 	    cb(false, err);
 	  else {
 	    resp.annotations.forEach(function(conceptObj) {
-	    	concepts[conceptObj.concept.label.toLowerCase()] = conceptObj.score;
+	    	concepts[conceptObj.concept.label.toLowerCase().replace(/[^\w\s!?]/g,' ')] = conceptObj.score;
 	    });
 	    cb(true, concepts);
 	  }	  
@@ -132,49 +138,67 @@ var saveNodes = function(newUser, nodes, callback){
 	
 };
 
+var getTextFromPdf = function(filePath, cb) {
+	extract(filePath, { splitPages: false }, function (err, text) {
+		if (err) {
+			console.dir(err);
+			return;
+		}
+		cb(text);
+	});
+};
+
 module.exports = function (app) {
 	app.get('/api', function(req,res){
 		res.json("Welcome to the Graph API");
 	});
 
-	app.post('/api/newuser', function(req,res){
-		var userName = req.body.userName;
+	app.post('/api/newuser', upload.single('document'), function (req, res, next){
+		var userName = req.body.username;
+		var firstName = req.body.firstname;
+		var lastName = req.body.lastname;
+		var filePath ='uploads/' + req.file.filename;
 
-		User.findOne({ 'userName' :  userName }, function(err, user){
-			if (err)
-	      return res.send(err);
-	  	if (user) {
-	      console.log("User " + userName + " already exists.");
-	      return res.send(false);
-	  	} else {
-	  		console.log("Adding new user.");
-	  		var newUser = new User();
-	      	var concepts = [];
-	      	newUser.firstName = req.body.firstName;
-	      	newUser.lastName = req.body.lastName;
-	      	newUser.userName = userName;
-	      	newUser.userMap = {};
-	      	getWatsonConcepts(req.body.text, function(success, concepts){
-	      		if(success) {
-	      			newUser.concepts = concepts;
-	      			newUser.markModified("userMap");
-	      			newUser.save(function(err, newUser) {
-					        if (err) {
-					          return res.send(err);
-					        }				    
-					        // res.json(newUser);
-					        updateNodes(newUser, function(){
-					        	res.json();
-					        });
-					    });
-	      		}
-	      		else {
-	      			console.log("Error with watson: " + JSON.stringify(concepts));
-	      			res.send(false);
-	      		}
-	      	});
-	  }
-		});
+
+		getTextFromPdf(filePath, function(dirty) {
+			var text = dirty.replace(/[^\w\s!?]/g,' ');
+			console.log(text);
+			User.findOne({ 'userName' :  userName }, function(err, user){
+				if (err) return res.send(err);	      		
+			  	if (user) {
+					console.log("User " + userName + " already exists.");
+					return res.send(false);
+			  	} else {
+			  		console.log("Adding new user.");
+			  		var newUser = new User();
+			      	var concepts = [];
+			      	newUser.firstName = req.body.firstname;
+			      	newUser.lastName = req.body.lastname;
+			      	newUser.userName = userName;
+			      	newUser.userMap = {};
+			      	getWatsonConcepts(text, function(success, concepts){
+			      		if(success) {
+			      			console.log(concepts);
+			      			newUser.concepts = concepts;
+			      			newUser.markModified("userMap");
+			      			newUser.save(function(err, newUser) {
+						        if (err) {
+						          return res.send(err);
+						        }				    
+						        // res.json(newUser);
+						        updateNodes(newUser, function(){
+						        	res.json();
+						        });
+						    });
+			      		}
+			      		else {
+			      			console.log("Error with watson: " + JSON.stringify(concepts));
+			      			res.send(false);
+			      		}
+			      	});
+			  	}
+			});
+		});	
 	});
 
 	app.get('/api/user/:user', function(req,res){
