@@ -1,4 +1,4 @@
-app.controller("mainController", function($scope){
+app.controller("mainController", ['$scope', '$window', function($scope, $window){
 
 	$scope.user = "";
 
@@ -6,4 +6,6 @@ app.controller("mainController", function($scope){
 		this.user = newUser;
 	};
 
-});
+	$scope.fid = $window.fid;
+
+}]);

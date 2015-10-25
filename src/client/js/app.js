@@ -34,16 +34,13 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider){
     fjs.parentNode.insertBefore(js, fjs);
   }(document, 'script', 'facebook-jssdk'));
 
-
+var fid = "";
 function statusChangeCallback(response) {
     if (response.status === 'connected') {
       // Logged into your app and Facebook.
-      console.log("fb", FB);
+      // console.log("fb", FB);
       document.getElementById('status').innerHTML = JSON.stringify(response);
-
-      FB.api('/me', function(response) {
-          console.log("vals", JSON.stringify(response));
-      });
+      
 
     } else if (response.status === 'not_authorized') {
       // The person is logged into Facebook, but not your app.
