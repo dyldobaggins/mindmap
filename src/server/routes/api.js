@@ -190,7 +190,7 @@ module.exports = function (app) {
 						        }				    
 						        // res.json(newUser);
 						        updateNodes(newUser, function(){
-						        	res.redirect('#/user/' + userName);
+						        	res.redirect('/#/user/' + userName);
 						        });
 						    });
 			      		}
