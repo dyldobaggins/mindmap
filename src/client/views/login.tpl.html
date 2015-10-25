@@ -11,10 +11,11 @@
       	     style="display: block; 
       	     		margin: auto" />
 
-		<form class="pure-form" id="cId" action="/api/uploadfile" method="post" enctype="multipart/form-data">
-			<input type="text" placeholder="Username" id="username" name="username">
-      <br>
-      <input type="file" name="document" accept=".zip"/>
+		<form class="pure-form" id="cId" action="/api/newuser" method="post" enctype="multipart/form-data">
+			<input type="text" placeholder="Username" id="username" name="username"><br>
+      <input type="text" placeholder="First Name" id="firstname" name="firstname"><br>
+      <input type="text" placeholder="Last Name" id="lastname" name="lastname"><br>      
+      <input type="file" name="document" accept=".pdf"/>
     		<!-- <input type="password" placeholder="Password" id="password"> -->
       <input type="submit" value="Submit" name="submit">  
   	</form>	
