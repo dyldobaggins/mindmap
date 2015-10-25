@@ -20,7 +20,6 @@ Graph.prototype = {
 			pruned.nodes.push({"name": user});
 			pruned.links.push({"source": 0, "target": pruned.links.length + 1, "value": data[user].score});
 		}
-		console.log("pruned", pruned);
 		this.setData(pruned);
 	},
 	init: function(opts){
@@ -32,9 +31,6 @@ Graph.prototype = {
 		if(!opts.element){
 			opts.element = "#graph";
 		}
-
-		console.log("data", this.data);
-		console.log("element", opts.element);
 
 		var width = window.innerWidth,
 		height = window.innerHeight;
@@ -84,22 +80,22 @@ Graph.prototype = {
 	    })
 	    .attr("rx", function(d){
 	    	if(d.index == 0){
-	    		d.radius = 40;
-	    		return d.radius - 5;
+	    		d.radius = 50;
+	    		return Math.abs(d.radius - 5);
 	    	}
 	    	else {
-	    		d.radius = 20 * self.data.links[d.index - 1].value;
-	    		return d.radius - 5;
+	    		d.radius = 35 * self.data.links[d.index - 1].value;
+	    		return Math.abs(d.radius - 5);
 	    	}
 	    })
 	    .attr("ry", function(d){
 	    	if(d.index == 0){
-	    		d.radius = 40;
-	    		return d.radius - 5;
+	    		d.radius = 50;
+	    		return Math.abs(d.radius - 5);
 	    	}
 	    	else {
-	    		d.radius = 20 * self.data.links[d.index - 1].value;
-	    		return d.radius - 5;
+	    		d.radius = 35 * self.data.links[d.index - 1].value;
+	    		return Math.abs(d.radius - 5);
 	    	}
 	    }); 
 
@@ -107,11 +103,11 @@ Graph.prototype = {
 			.attr("r", 30)
 			.attr("r", function(d){
 				if(d.index == 0){
-					d.radius = 40;
+					d.radius = 50;
 					return d.radius;
 				}
 				else {
-					d.radius = 20 * self.data.links[d.index - 1].value;
+					d.radius = 35 * self.data.links[d.index - 1].value;
 					return d.radius;
 				}
 			})
