@@ -11,11 +11,14 @@ app.controller("userController", function($scope, $stateParams, $http, api, Face
 	api.getMap($scope.user, true).then(function(map){
 		var initGraph = function(){
 			var graph = new Graph($scope.user);
-			graph.pruneAPIData(map);
-			graph.init({element: "#graph"});
-			$scope.loading.status = false;
+			graph.pruneAPIData(map, function(){
+				console.log("DONE");
+				$scope.loading.status = false;
+				$("#loading").remove();
+				graph.init({element: "#graph"});
+			});
 		};
-		
+
 		map = map.plain();
 
 		if(!map){
@@ -35,8 +38,7 @@ app.controller("userController", function($scope, $stateParams, $http, api, Face
 			    api.getUserFromId(id, false, function(user) {
 					userRef[id] = user.plain();
 					map[id].name = userRef[id].userName;
-
-					Facebook.api('/' + FB.getUserID() + '/picture', function(response) {
+					Facebook.api('/' + userRef[id].userName + '/picture?width=200&height=200', function(response) {
 					  if(response && response.error){
 					  	console.log("error", response.error);
 					  }

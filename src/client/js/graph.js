@@ -8,20 +8,32 @@ Graph.prototype = {
 		this.data = data;
 	},
 
-	pruneAPIData: function(data){
+	pruneAPIData: function(data, callback){
 		var pruned = {};
 		pruned.nodes = [];
 		pruned.links = [];
 
-		//user node
-		pruned.nodes.push({"name": this.user});
+		var self = this;
 
-		for(user in data){
-			pruned.nodes.push({"name": data[user].name, "avatar": data[user].avatar});
-			pruned.links.push({"source": 0, "target": pruned.links.length + 1, "value": data[user].score});
-		}
-		console.log("pruned", pruned);
-		this.setData(pruned);
+		//user node
+		FB.api(
+		    "/" + self.user + "/picture?width=400&height=400",
+		    function (response) {
+		      if (response && !response.error) {
+		        pruned.nodes.push({"name": self.user, "avatar": response.data.url});
+
+		        for(user in data){
+		        	pruned.nodes.push({"name": data[user].name, "avatar": data[user].avatar});
+		        	pruned.links.push({"source": 0, "target": pruned.links.length + 1, "value": data[user].score});
+		        }
+		        console.log("pruned", pruned);
+
+		        self.setData(pruned);
+		        callback(true);
+		      }
+		    }
+		);
+		
 	},
 	init: function(opts){
 		var self = this;
@@ -52,19 +64,19 @@ Graph.prototype = {
 		var svg = d3.select(opts.element).append("svg")
 		.attr("width", width)
 		.attr("height", height);
-
-		force.nodes(this.data.nodes)
-			.links(this.data.links)
+		
+		force.nodes(self.data.nodes)
+			.links(self.data.links)
 			.start();
 
 		var link = svg.selectAll(".link")
-			.data(this.data.links)
+			.data(self.data.links)
 			.enter().append("line")
 			.attr("class", "link")
 			.style("stroke-width", function(d) { return Math.sqrt(d.value); });
 
 		var node = svg.selectAll(".node")
-			.data(this.data.nodes)
+			.data(self.data.nodes)
 			.enter().append('g')
 			.call(force.drag);
 
@@ -145,6 +157,6 @@ Graph.prototype = {
 		    
 		    node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; }); 
 		});
-		return this;
+		return self;
 	}
 }
