@@ -4,9 +4,14 @@ app.controller("userController", function($scope, $stateParams, $http, api){
 
 	$scope.user = $stateParams.user;
 
-	$scope.loading = true;
+	$scope.loading = {};
+	$scope.loading.status = true;
+	$scope.loading.text = "Loading...";
 
 	api.getMap($scope.user, true).then(function(map){
+		if(!map){
+			return $scope.loading.text = "No Data Found";
+		}
 		map = map.plain();
 		for(var id in map) {
 			(function(id) {
@@ -35,7 +40,7 @@ app.controller("userController", function($scope, $stateParams, $http, api){
 		graph.pruneAPIData(map);
 		graph.init({element: "#graph"});
 
-		$scope.loading = false;
+		$scope.loading.status = false;
 	});
 
 });

@@ -1,7 +1,15 @@
 var app = angular.module('graph', [
 	'ui.router',
-	'restangular'
+	'restangular',
+	'facebook'
 ]);
+//facebook
+app.config(function(FacebookProvider) {
+     // Set your appId through the setAppId method or
+     // use the shortcut in the initialize method directly.
+     FacebookProvider.init('1670710456508835');
+})
+
 
 // routing
 
@@ -29,3 +37,4 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider){
 app.config(function(RestangularProvider){
 	RestangularProvider.setBaseUrl("/api");
 });
+

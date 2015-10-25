@@ -1,6 +1,95 @@
 body {
 	font-family: 'Lato', sans-serif;
 }
+#login {
+	position: absolute;
+	top:0px;
+	left:0px;
+	background: #000;
+	width:100%;
+	height:100%;
+
+	button#fbLogin {
+		background: rgb(70, 96, 175);
+		border: none;
+		padding: 9px 15px;
+		cursor: pointer;
+		outline:none;
+		@include transition(.1s);
+
+		&:hover {
+			background: #5B71B5;
+		}
+		&:active {
+			background: #3854A9;
+		}
+	}
+
+	button#toGraph {
+		background: #ff2b06;
+		border: none;
+		padding: 9px 15px;
+		cursor: pointer;
+		outline:none;
+		@include transition(.1s);
+
+		&:hover {
+			background: #DA4026;
+		}
+		&:active {
+			background: #DA4026;
+		}
+	}
+
+	input.submit {
+		background: rgb(70, 96, 175);
+		border: none;
+		padding: 9px 15px;
+		cursor: pointer;
+		outline:none;
+		@include transition(.1s);
+
+		&:hover {
+			background: #5B71B5;
+		}
+		&:active {
+			background: #3854A9;
+		}
+	}
+
+	.content {
+		position: relative;
+		top: 50%;
+		transform: translateY(-50%);
+		width: 500px;
+		height: auto;
+		margin: 0 auto;
+		color: #fff;
+		text-align: center;
+		z-index: 999999999;
+
+		h1 {
+			font-size:50px;
+			font-weight: 100;
+			letter-spacing: 0.02em;
+			background: #000;
+			display: inline-block;
+			padding: 40px;
+		}
+
+		.loginForm {
+
+		}
+	}
+
+	#starfield {
+		position:absolute;
+		top:0px;
+		left:0px;
+		width:100%;
+		height:100%;
+	}
+}
 
 #cId{
 	text-align: center;

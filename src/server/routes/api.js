@@ -157,11 +157,12 @@ module.exports = function (app) {
 		var firstName = req.body.firstname;
 		var lastName = req.body.lastname;
 		var filePath ='uploads/' + req.file.filename;
+		console.log("body", req.body);
 
 
 		getTextFromPdf(filePath, function(dirty) {
 			var text = dirty.replace(/[^\w\s!?]/g,' ');
-			console.log(text);
+			// console.log(text);
 			User.findOne({ 'userName' :  userName }, function(err, user){
 				if (err) return res.send(err);	      		
 			  	if (user) {

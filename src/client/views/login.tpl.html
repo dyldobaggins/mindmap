@@ -1,9 +1,36 @@
-<!-- <head>
-	<title> MindMap </title>
-	<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
-</head>
- -->
-<div style="background-size:cover; background-position: 0 20%; width:100%; height:100%; background-image: url(assets/images/connectivity-global-network.jpg)">
+<div id="login">
+  <div class="content">
+    <h1>mindMapper</h1>
+
+    <div>
+      <button id="toGraph" ui-sref="user({user: fbUsername})">View My Connections</button>  
+    </div>
+
+    <br />
+    <button id="fbLogin" data-ng-disabled="!facebookReady" ng-show="!loggedIn" ng-click="login()">Login to Facebook</button>
+    <br />
+    <span ng-show="showForm">Logged in as {{fbUsername}}</span>
+    <form ng-show="showForm" class="pure-form" id="cId" action="/api/newuser" method="post" enctype="multipart/form-data">
+      <input type="hidden" id="username" name="username" ng-value="fbUsername" />
+      <!-- <input type="text" placeholder="Username" id="username" name="username"><br>
+      <input type="text" placeholder="First Name" id="firstname" name="firstname"><br>
+      <input type="text" placeholder="Last Name" id="lastname" name="lastname"><br>     -->  
+      <input class="file" type="file" name="document" accept=".pdf" />
+      <input class="submit" type="submit" value="Submit" name="submit">  
+    </form> 
+    
+    
+  </div>
+  <script type="text/javascript">
+    particlesJS.load('starfield', 'assets/particles.json', function() {
+      //particles loaded
+    });
+  </script>
+  <div id="starfield"></div>
+</div>
+
+
+<!-- <div style="background-size:cover; background-position: 0 20%; width:100%; height:100%; background-image: url(assets/images/connectivity-global-network.jpg)">
 		<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
 
       	<img onload="this.style.opacity='1';" 
@@ -11,12 +38,14 @@
       	     style="display: block; 
       	     		margin: auto" />
 
-		<form class="pure-form" id="cId" action="/api/newuser" method="post" enctype="multipart/form-data">
-			<input type="text" placeholder="Username" id="username" name="username"><br>
+    <fb:login-button scope="public_profile,email" onlogin="checkLoginState();"></fb:login-button>
+    <div id="status"></div>
+
+		<form class="pure-form" id="cId" action="/api/newuser" method="post" enctype="multipart/form-data"> -->
+			<!-- <input type="text" placeholder="Username" id="username" name="username"><br>
       <input type="text" placeholder="First Name" id="firstname" name="firstname"><br>
-      <input type="text" placeholder="Last Name" id="lastname" name="lastname"><br>      
-      <input type="file" name="document" accept=".pdf"/>
-    		<!-- <input type="password" placeholder="Password" id="password"> -->
+      <input type="text" placeholder="Last Name" id="lastname" name="lastname"><br>     -->  
+     <!--  <input type="file" name="document" accept=".pdf"/>\
       <input type="submit" value="Submit" name="submit">  
   	</form>	
-</div>
+</div> -->
