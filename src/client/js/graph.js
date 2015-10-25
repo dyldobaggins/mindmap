@@ -8,26 +8,6 @@ Graph.prototype = {
 		this.data = data;
 	},
 
-
-	/*
-
-
-
-	var graph_data = {
-		"nodes":[
-			{"name":"userOne"},
-			{"name":"userTwo"},
-			{"name":"userThree"},
-			{"name":"userFour"}
-		],
-		"links":[
-		    {"source":0,"target":1,"value":0.33},
-		    {"source":0,"target":2,"value":0.99},
-		    {"source":0,"target":3,"value":0.45}
-		]
-		};
-
-	*/
 	pruneAPIData: function(data){
 		var pruned = {};
 		pruned.nodes = [];
@@ -44,6 +24,8 @@ Graph.prototype = {
 		this.setData(pruned);
 	},
 	init: function(opts){
+		var self = this;
+
 		if(!opts){
 			opts = {};
 		}
@@ -89,7 +71,15 @@ Graph.prototype = {
 		  .data(this.data.nodes)
 		.enter().append("circle")
 		  .attr("class", "node")
-		  .attr("r", 5)
+		  // .attr("r", 30)
+		  .attr("r", function(d){
+		  	if(d.index == 0){
+		  		return 40;
+		  	}
+		  	else {
+		  		return 20 * self.data.links[d.index - 1].value;
+		  	}
+		  })
 		  .call(force.drag);
 
 		node.append("title")

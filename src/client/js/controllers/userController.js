@@ -4,6 +4,8 @@ app.controller("userController", function($scope, $stateParams, api){
 
 	$scope.user = $stateParams.user;
 
+	$scope.loading = true;
+
 	api.getMap($scope.user, true).then(function(map){
 		map = map.plain();
 
@@ -25,6 +27,8 @@ app.controller("userController", function($scope, $stateParams, api){
 		var graph = new Graph($scope.user);
 		graph.pruneAPIData(map);
 		graph.init({element: "#graph"});
+
+		$scope.loading = false;
 	});
 
 });
