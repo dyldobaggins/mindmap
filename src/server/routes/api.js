@@ -179,26 +179,38 @@ module.exports = function (app) {
 			      	newUser.fullname = fullname;
 			      	newUser.userName = userName;
 			      	newUser.userMap = {};
-			      	getWatsonConcepts(text, function(success, concepts){
-			      		if(success) {
-			      			console.log(concepts);
-			      			newUser.concepts = concepts;
-			      			newUser.markModified("userMap");
-			      			newUser.save(function(err, newUser) {
-						        if (err) {
-						          return res.send(err);
-						        }				    
-						        // res.json(newUser);
-						        updateNodes(newUser, function(){
-						        	res.redirect('/#/user/' + userName);
-						        });
-						    });
-			      		}
-			      		else {
-			      			console.log("Error with watson: " + JSON.stringify(concepts));
-			      			res.send(false);
-			      		}
-			      	});
+			      	var done = false;
+			      	var tryAgain = true;
+			      	var tries = 0;
+			      	while(!done && tries < 5) {			  
+			      		if(tryAgain) {
+			      			console.log("Watson trial " + tries);
+			      			tryAgain = false;
+			      			getWatsonConcepts(text, function(success, concepts){
+					      		if(success) {
+					      			console.log(concepts);
+					      			newUser.concepts = concepts;
+					      			newUser.markModified("userMap");
+					      			newUser.save(function(err, newUser) {
+								        if (err) {
+								          return res.send(err);
+								        }				    
+								        done = true;
+								        updateNodes(newUser, function(){
+								        	res.redirect('/#/user/' + userName);
+								        });
+								    });
+
+					      		}
+					      		else {
+					      			console.log("Error with watson: " + JSON.stringify(concepts));
+					      			tryAgain = true;
+					      			tries++;
+					      			// res.send(false);
+					      		}
+					      	});
+			      		}			      		
+			      	}
 			  	}
 			});
 		});	
