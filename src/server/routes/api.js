@@ -177,6 +177,14 @@ module.exports = function (app) {
 		});
 	});
 
+	app.get('/api/user/:user', function(req,res){
+		User.findOne({'_id': req.params.user}, function(err, user){
+			if(err) return res.send(err);
+			if(user) return res.send(user);
+			else return res.send();
+		});
+	});
+
 	app.get("/api/user/:user/map", function(req,res){
 		console.log(req.params);
 		User.findOne({ 'userName' :  req.params.user }, function(err, user){
