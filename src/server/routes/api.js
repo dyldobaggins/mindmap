@@ -116,7 +116,8 @@ var saveNodes = function(newUser, nodes, callback){
 			found.userMap[newUser._id] = {
 				"score": nodes[i].score,
 				"concepts": nodes[i].concepts
-			}
+			};
+			
 			found.markModified("userMap");
 
 			found.save(function(err, savedNode){
@@ -132,22 +133,22 @@ var saveNodes = function(newUser, nodes, callback){
 };
 
 module.exports = function (app) {
-  app.get('/api', function(req,res){
-  	res.json("Welcome to the Graph API");
-  });
+	app.get('/api', function(req,res){
+		res.json("Welcome to the Graph API");
+	});
 
-  app.post('/api/newuser', function(req,res){
-  	var userName = req.body.userName;
+	app.post('/api/newuser', function(req,res){
+		var userName = req.body.userName;
 
-  	User.findOne({ 'userName' :  userName }, function(err, user){
-  		if (err)
-          return res.send(err);
-      	if (user) {
-          console.log("User " + userName + " already exists.");
-          return res.send(false);
-      	} else {
-      		console.log("Adding new user.");
-      		var newUser = new User();
+		User.findOne({ 'userName' :  userName }, function(err, user){
+			if (err)
+	      return res.send(err);
+	  	if (user) {
+	      console.log("User " + userName + " already exists.");
+	      return res.send(false);
+	  	} else {
+	  		console.log("Adding new user.");
+	  		var newUser = new User();
 	      	var concepts = [];
 	      	newUser.firstName = req.body.firstName;
 	      	newUser.lastName = req.body.lastName;
@@ -172,9 +173,22 @@ module.exports = function (app) {
 	      			res.send(false);
 	      		}
 	      	});
-      }
-  	});
-  });
+	  }
+		});
+	});
+
+	app.get("/api/:user/map", function(req,res){
+		console.log(req.params);
+		User.findOne({ 'userName' :  req.params.user }, function(err, user){
+			if (err) return res.send(err);
+			if (user) {
+				return res.send(user.userMap);
+			}
+			else return res.send();
+		});
+	});
+
+	
 
   require('./watson.js')(app);
 };
