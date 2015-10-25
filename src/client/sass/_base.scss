@@ -19,3 +19,24 @@ input{
 	right: 0;
 	top: 0;
 }
+
+#graph {
+	background: #000;
+	width:100%;
+	height:100%;
+
+	
+}
+
+.node {
+  stroke: #fff;
+  stroke-width: 1.5px;
+  /*fill: #fff;*/
+  fill: url(https://scontent-lga3-1.xx.fbcdn.net/hphotos-xap1/t31.0-8/11707686_10153391552790336_2333245517216608156_o.jpg);
+}
+
+.link {
+  stroke: #fff;
+  stroke-opacity: .6;
+}
+
