@@ -11,13 +11,31 @@ input{
 	text-align: center;
 }
 
-#part{
-	margin-top: 2.5%;
-	margin-right: 2.5%;
-	background-color: red;
+.menu{
+	margin-top: 1%;
+	margin-right: 1%;
 	position: fixed;
 	right: 0;
 	top: 0;
+	width: 35%;
+	background-color: #C6C6C6;
+}
+
+#part{
+	height: 50%;
+}
+
+.icon{
+	top: 0;
+	font-size: 1.5em;
+}
+
+.right{
+	text-align: right;
+}
+
+.plus{
+	height: 30px;
 }
 
 #graph {

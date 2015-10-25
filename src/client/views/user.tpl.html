@@ -1,16 +1,16 @@
 <div>{{user}}</div>
 
-<div id="part" ng-click="toggle();" ng-hide="collapsed">
+<div class="menu plus right" ng-click="toggle();" ng-hide="collapsed"><span class="icon">+</span></div>
 
-<div id="part">
+<span class="menu" id="part" ng-hide="!collapsed">
 
-	<span ng-click="toggle();" ng-hide="!collapsed">Collapse</span>
+	<div class="right" ng-click="toggle();"><span class="icon">--</span></div>
 	
-	<div ng-repeat="{{}}">
-		
-	</div>
-	
-</div>	
+	<!-- <div ng-repeat="{{user in map[users]}}">
+		<div>{{user.name}} - ( {{userMap[score]}} * 100 )% shared interests</div>
+	</div> -->
+
+</span>	
 
 <div id="graph">
 	
