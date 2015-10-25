@@ -1,5 +1,6 @@
 var app = angular.module('graph', [
-	'ui.router'
+	'ui.router',
+	'restangular'
 ]);
 
 // routing
@@ -22,4 +23,9 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider){
 		templateUrl: 'views/user.tpl.html'	
 	});
 
+});
+
+//restangular
+app.config(function(RestangularProvider){
+	RestangularProvider.setBaseUrl("/api");
 });

@@ -177,7 +177,7 @@ module.exports = function (app) {
 		});
 	});
 
-	app.get("/api/:user/map", function(req,res){
+	app.get("/api/user/:user/map", function(req,res){
 		console.log(req.params);
 		User.findOne({ 'userName' :  req.params.user }, function(err, user){
 			if (err) return res.send(err);
