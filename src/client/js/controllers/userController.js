@@ -4,4 +4,10 @@ app.controller("userController", function($scope, $stateParams){
 
 	$scope.user = $stateParams.user;
 
+	$scope.collapsed = false;
+
+	$scope.toggle = function(){
+		$scope.collapsed = !$scope.collapsed;
+	}
+
 });
