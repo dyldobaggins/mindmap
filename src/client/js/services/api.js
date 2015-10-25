@@ -1,11 +1,11 @@
 app.service('api', function($q, Restangular) {
     return {
-      getUserFromId: function(id, promiseFlag){
+      getUserFromId: function(id, promiseFlag, cb){
         var promise = Restangular.one('user', id).get();
         if(promiseFlag) return promise;
         else {
           promise.then(function(user){
-            return user;
+            cb(user);
           });
         }
       },
