@@ -56,43 +56,97 @@ Graph.prototype = {
 		.attr("width", width)
 		.attr("height", height);
 
-		force
-		  .nodes(this.data.nodes)
-		  .links(this.data.links)
-		  .start();
+		force.nodes(this.data.nodes)
+			.links(this.data.links)
+			.start();
 
 		var link = svg.selectAll(".link")
-		  .data(this.data.links)
-		.enter().append("line")
-		  .attr("class", "link")
-		  .style("stroke-width", function(d) { return Math.sqrt(d.value); });
+			.data(this.data.links)
+			.enter().append("line")
+			.attr("class", "link")
+			.style("stroke-width", function(d) { return Math.sqrt(d.value); });
 
 		var node = svg.selectAll(".node")
-		  .data(this.data.nodes)
-		.enter().append("circle")
-		  .attr("class", "node")
-		  // .attr("r", 30)
-		  .attr("r", function(d){
-		  	if(d.index == 0){
-		  		return 40;
-		  	}
-		  	else {
-		  		return 20 * self.data.links[d.index - 1].value;
-		  	}
-		  })
-		  .call(force.drag);
+			.data(this.data.nodes)
+			.enter().append('g')
+			.call(force.drag);
+
+		node.append("clipPath")
+	    .attr("id", function(d){
+	    	return "ellipse-clip" + d.index;
+	    })
+	  .append("ellipse")
+	    .attr("cx", function(d){
+	    	return 0;
+	    })
+	    .attr("cy", function(d){
+	    	return 0;
+	    })
+	    .attr("rx", function(d){
+	    	if(d.index == 0){
+	    		d.radius = 40;
+	    		return d.radius - 5;
+	    	}
+	    	else {
+	    		d.radius = 20 * self.data.links[d.index - 1].value;
+	    		return d.radius - 5;
+	    	}
+	    })
+	    .attr("ry", function(d){
+	    	if(d.index == 0){
+	    		d.radius = 40;
+	    		return d.radius - 5;
+	    	}
+	    	else {
+	    		d.radius = 20 * self.data.links[d.index - 1].value;
+	    		return d.radius - 5;
+	    	}
+	    }); 
+
+		node.append("circle")
+			.attr("r", 30)
+			.attr("r", function(d){
+				if(d.index == 0){
+					d.radius = 40;
+					return d.radius;
+				}
+				else {
+					d.radius = 20 * self.data.links[d.index - 1].value;
+					return d.radius;
+				}
+			})
+
 
 		node.append("title")
 		  .text(function(d) { return d.name; });
 
-		force.on("tick", function() {
-		link.attr("x1", function(d) { return d.source.x; })
-		    .attr("y1", function(d) { return d.source.y; })
-		    .attr("x2", function(d) { return d.target.x; })
-		    .attr("y2", function(d) { return d.target.y; });
 
-		node.attr("cx", function(d) { return d.x; })
-		    .attr("cy", function(d) { return d.y; });
+
+		node.append("image")
+		      .attr("xlink:href", function(d) { return "http://si.wsj.net/public/resources/images/BN-BY925_mag041_OZ_20140318165119.jpg"; })
+		      .attr("x", function(d){
+		      	return -1*d.radius;
+		      })
+		      .attr("y", function(d){
+		      	return -1*d.radius;
+		      })
+		      .attr("width", function(d){
+		      	return d.radius*2;
+		      })
+		      .attr("height", function(d){
+		      	return d.radius*2;
+		      })
+		      .attr("clip-path", function(d){
+		      	return "url(#ellipse-clip" + d.index + ")";
+		      });
+
+		force.on("tick", function() {
+		     link.attr("x1", function(d) { return d.source.x; })
+		        .attr("y1", function(d) { return d.source.y; })
+		        .attr("x2", function(d) { return d.target.x; })
+		        .attr("y2", function(d) { return d.target.y; });
+		    
+		    node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; }); 
 		});
 		return this;
 	}

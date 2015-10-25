@@ -3,7 +3,6 @@ var Node = require('../models/Node'),
 	watson = require('watson-developer-cloud'),
 	extract = require('pdf-text-extract'),
 	path = require('path'),
-	validator = require('validator'),
 	multer  = require('multer');
 
 var upload = multer({ dest: 'uploads/' });
