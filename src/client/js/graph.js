@@ -17,9 +17,10 @@ Graph.prototype = {
 		pruned.nodes.push({"name": this.user});
 
 		for(user in data){
-			pruned.nodes.push({"name": user});
+			pruned.nodes.push({"name": data[user].name, "avatar": data[user].avatar});
 			pruned.links.push({"source": 0, "target": pruned.links.length + 1, "value": data[user].score});
 		}
+		console.log("pruned", pruned);
 		this.setData(pruned);
 	},
 	init: function(opts){
@@ -119,7 +120,7 @@ Graph.prototype = {
 
 
 		node.append("image")
-		      .attr("xlink:href", function(d) { return "http://si.wsj.net/public/resources/images/BN-BY925_mag041_OZ_20140318165119.jpg"; })
+		      .attr("xlink:href", function(d) { return d.avatar; })
 		      .attr("x", function(d){
 		      	return -1*d.radius;
 		      })

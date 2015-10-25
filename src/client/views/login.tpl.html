@@ -9,9 +9,10 @@
     <br />
     <button id="fbLogin" data-ng-disabled="!facebookReady" ng-show="!loggedIn" ng-click="login()">Login to Facebook</button>
     <br />
-    <span ng-show="showForm">Logged in as {{fbUsername}}</span>
+    <span ng-show="showForm">Logged in as {{fullname}}</span>
     <form ng-show="showForm" class="pure-form" id="cId" action="/api/newuser" method="post" enctype="multipart/form-data">
       <input type="hidden" id="username" name="username" ng-value="fbUsername" />
+      <input type="hidden" id="fullname" name="fullname" ng-value="fullname" />
       <!-- <input type="text" placeholder="Username" id="username" name="username"><br>
       <input type="text" placeholder="First Name" id="firstname" name="firstname"><br>
       <input type="text" placeholder="Last Name" id="lastname" name="lastname"><br>     -->  

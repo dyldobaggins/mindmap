@@ -154,8 +154,10 @@ module.exports = function (app) {
 
 	app.post('/api/newuser', upload.single('document'), function (req, res, next){
 		var userName = req.body.username;
-		var firstName = req.body.firstname;
-		var lastName = req.body.lastname;
+		// var firstName = req.body.firstname;
+		// var lastName = req.body.lastname;
+		var fullname = req.body.fullname;
+
 		var filePath ='uploads/' + req.file.filename;
 		console.log("body", req.body);
 
@@ -172,8 +174,9 @@ module.exports = function (app) {
 			  		console.log("Adding new user.");
 			  		var newUser = new User();
 			      	var concepts = [];
-			      	newUser.firstName = req.body.firstname;
-			      	newUser.lastName = req.body.lastname;
+			      	// newUser.firstName = req.body.firstname;
+			      	// newUser.lastName = req.body.lastname;
+			      	newUser.fullname = fullname;
 			      	newUser.userName = userName;
 			      	newUser.userMap = {};
 			      	getWatsonConcepts(text, function(success, concepts){
@@ -187,7 +190,7 @@ module.exports = function (app) {
 						        }				    
 						        // res.json(newUser);
 						        updateNodes(newUser, function(){
-						        	res.json();
+						        	res.redirect('#/user/' + userName);
 						        });
 						    });
 			      		}
@@ -213,8 +216,10 @@ module.exports = function (app) {
 	app.get("/api/user/:user/map", function(req,res){
 		console.log(req.params);
 		User.findOne({ 'userName' :  req.params.user }, function(err, user){
+			console.log("ret from find", err, user);
 			if (err) return res.send(err);
 			if (user) {
+				console.log("user found");
 				return res.send(user.userMap);
 			}
 			else return res.send();

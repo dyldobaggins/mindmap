@@ -30,7 +30,10 @@ app.controller("loginController", function($scope, Facebook){
     $scope.me = function() {
       Facebook.api('/me', function(response) {
         $scope.user = response;
-        $scope.fbUsername = $scope.user.name.toLowerCase().replace(' ', '');
+        console.log($scope.user);
+        $scope.fbUsername = $scope.user.id;
+        $scope.fullname = $scope.user.name;
+        // $scope.fbUsername = $scope.user.name.toLowerCase().replace(' ', '');
       });
     };
 

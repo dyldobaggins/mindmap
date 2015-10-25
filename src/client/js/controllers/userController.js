@@ -1,4 +1,4 @@
-app.controller("userController", function($scope, $stateParams, $http, api){
+app.controller("userController", function($scope, $stateParams, $http, api, Facebook){
 	var userRef = {};
 	console.log($stateParams.user);
 
@@ -9,38 +9,53 @@ app.controller("userController", function($scope, $stateParams, $http, api){
 	$scope.loading.text = "Loading...";
 
 	api.getMap($scope.user, true).then(function(map){
+		var initGraph = function(){
+			var graph = new Graph($scope.user);
+			graph.pruneAPIData(map);
+			graph.init({element: "#graph"});
+			$scope.loading.status = false;
+		};
+		
+		map = map.plain();
+
 		if(!map){
 			return $scope.loading.text = "No Data Found";
 		}
-		map = map.plain();
+
+		if(Object.keys(map).length < 1){
+			initGraph();
+		}
+		
+
+		var numFields = Object.keys(map).length;
+		var done = 0;
+
 		for(var id in map) {
 			(function(id) {
 			    api.getUserFromId(id, false, function(user) {
 					userRef[id] = user.plain();
+					map[id].name = userRef[id].userName;
+
+					Facebook.api('/' + FB.getUserID() + '/picture', function(response) {
+					  if(response && response.error){
+					  	console.log("error", response.error);
+					  }
+					  else if(response && response.data && response.data.url){
+					  	map[id].avatar = response.data.url;
+					  }
+
+					  if(++done === numFields){
+					  	initGraph();
+					  }
+					});
+
+					
 				});
 		    })(id);			
 		}
+
 		$scope.userRef = userRef;
-		var graph_data = {
-		"nodes":[
-			{"name":"userOne"},
-			{"name":"userTwo"},
-			{"name":"userThree"},
-			{"name":"userFour"}
-		],
-		"links":[
-		    {"source":0,"target":1,"value":0.33},
-		    {"source":0,"target":2,"value":0.99},
-		    {"source":0,"target":3,"value":0.45}
-		]
-		};
 
-		console.log("map", map);
-		var graph = new Graph($scope.user);
-		graph.pruneAPIData(map);
-		graph.init({element: "#graph"});
-
-		$scope.loading.status = false;
 	});
 
 });

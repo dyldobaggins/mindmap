@@ -1,11 +1,15 @@
 var mongoose = require('mongoose');
 var schema = new mongoose.Schema({
-	firstName: {
-		type: String,
-		default: ""
-	},
-	lastName: {
-		type: String,
+	// firstName: {
+	// 	type: String,
+	// 	default: ""
+	// },
+	// lastName: {
+	// 	type: String,
+	// 	default: ""
+	// },
+	fullname: {
+		type: String, 
 		default: ""
 	},
 	userName: {
